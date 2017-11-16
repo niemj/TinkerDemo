@@ -26,7 +26,7 @@ android {
         buildConfigField "String", "MESSAGE", "\"I am the base apk\""
 
         buildConfigField "String", "TINKER_ID", "\"${getTinkerIdValue()}\""
-        buildConfigField "String", "PLATFORM",  "\"all\""
+        buildConfigField "String", "PLATFORM", "\"all\""
     }
 
     signingConfigs {
@@ -82,9 +82,11 @@ dependencies {
     compile("com.tencent.tinker:tinker-android-lib:${TINKER_VERSION}") { changing = true }
     provided("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}") { changing = true }
     compile "com.android.support:multidex:1.0.1"
+
+    compile 'com.github.romainguy:ViewServer:017c01cd512cac3ec054d9eee05fc48c5a9d2de'
 }
 
-def gitSha() {
+static def gitSha() {
     try {
         // String gitRev = 'git rev-parse --short HEAD'.execute(null, project.rootDir).text.trim()
         String gitRev = "1008611"
@@ -105,11 +107,11 @@ ext {
 
     //for normal build
     //old apk file to build patch apk
-    tinkerOldApkPath = "${bakPath}/app-release-0421-17-23-16.apk"
+    tinkerOldApkPath = "${bakPath}/app-debug-1113-16-07-54.apk"
     //proguard mapping file to build patch apk
-    tinkerApplyMappingPath = "${bakPath}/app-release-0421-17-23-16-mapping.txt"
+    tinkerApplyMappingPath = "${bakPath}/app-release-1113-15-52-45-mapping.txt"
     //resource R.txt to build patch apk, must input if there is resource changed
-    tinkerApplyResourcePath = "${bakPath}/app-release-0421-17-23-16-R.txt"
+    tinkerApplyResourcePath = "${bakPath}/app-debug-1113-16-07-54-R.txt"
 
     //only use for build all flavor, if not, just ignore this field
     tinkerBuildFlavorDirectory = "${bakPath}/app-0421-17-11-26"
@@ -151,8 +153,8 @@ if (buildWithTinker()) {
         oldApk = getOldApkPath()
         /**
          * 可选，默认'false'
-         *有些情况下我们可能会收到一些警告
-         *如果ignoreWarning为true，我们只是断言补丁过程
+         * 有些情况下我们可能会收到一些警告
+         * 如果ignoreWarning为true，我们只是断言补丁过程
          * case 1：minSdkVersion低于14，但是你使用dexMode与raw。
          * case 2：在AndroidManifest.xml中新添加Android组件，
          * case 3：装载器类在dex.loader {}不保留在主要的dex，
@@ -165,7 +167,7 @@ if (buildWithTinker()) {
         ignoreWarning = false
 
         /**
-         *可选，默认为“true”
+         * 可选，默认为“true”
          * 是否签名补丁文件
          * 如果没有，你必须自己做。否则在补丁加载过程中无法检查成功
          * 我们将使用sign配置与您的构建类型
@@ -183,20 +185,20 @@ if (buildWithTinker()) {
          */
         buildConfig {
             /**
-             *可选，默认为'null'
+             * 可选，默认为'null'
              * 如果我们使用tinkerPatch构建补丁apk，你最好应用旧的
              * apk映射文件如果minifyEnabled是启用！
              * 警告：你必须小心，它会影响正常的组装构建！
              */
             applyMapping = getApplyMappingPath()
             /**
-             *可选，默认为'null'
+             * 可选，默认为'null'
              * 很高兴保持资源ID从R.txt文件，以减少java更改
              */
             applyResourceMapping = getApplyResourceMappingPath()
 
             /**
-             *必需，默认'null'
+             * 必需，默认'null'
              * 因为我们不想检查基地apk与md5在运行时（它是慢）
              * tinkerId用于在试图应用补丁时标识唯一的基本apk。
              * 我们可以使用git rev，svn rev或者简单的versionCode。
@@ -205,7 +207,7 @@ if (buildWithTinker()) {
             tinkerId = getTinkerIdValue()
 
             /**
-             *如果keepDexApply为true，则表示dex指向旧apk的类。
+             * 如果keepDexApply为true，则表示dex指向旧apk的类。
              * 打开这可以减少dex diff文件大小。
              */
             keepDexApply = false
@@ -213,7 +215,7 @@ if (buildWithTinker()) {
 
         dex {
             /**
-             *可选，默认'jar'
+             * 可选，默认'jar'
              * 只能是'raw'或'jar'。对于原始，我们将保持其原始格式
              * 对于jar，我们将使用zip格式重新包装dexes。
              * 如果你想支持下面14，你必须使用jar
@@ -222,14 +224,14 @@ if (buildWithTinker()) {
             dexMode = "jar"
 
             /**
-             *必需，默认'[]'
+             * 必需，默认'[]'
              * apk中的dexes应该处理tinkerPatch
              * 它支持*或？模式。
              */
             pattern = ["classes*.dex",
                        "assets/secondary-dex-?.jar"]
             /**
-             *必需，默认'[]'
+             * 必需，默认'[]'
              * 警告，这是非常非常重要的，加载类不能随补丁改变。
              * 因此，它们将从补丁程序中删除。
              * 你必须把下面的类放到主要的dex。
@@ -256,7 +258,7 @@ if (buildWithTinker()) {
 
         res {
             /**
-             *可选，默认'[]'
+             * 可选，默认'[]'
              * apk中的什么资源应该处理tinkerPatch
              * 它支持*或？模式。
              * 你必须包括你在这里的所有资源，
@@ -265,15 +267,15 @@ if (buildWithTinker()) {
             pattern = ["res/*", "assets/*", "resources.arsc", "AndroidManifest.xml"]
 
             /**
-             *可选，默认'[]'
-             *资源文件排除模式，忽略添加，删除或修改资源更改
+             * 可选，默认'[]'
+             * 资源文件排除模式，忽略添加，删除或修改资源更改
              * *它支持*或？模式。
              * *警告，我们只能使用文件没有relative与resources.arsc
              */
             ignoreChange = ["assets/sample_meta.txt"]
 
             /**
-             *默认100kb
+             * 默认100kb
              * *对于修改资源，如果它大于'largeModSize'
              * *我们想使用bsdiff算法来减少补丁文件的大小
              */
@@ -282,7 +284,7 @@ if (buildWithTinker()) {
 
         packageConfig {
             /**
-             *可选，默认'TINKER_ID，TINKER_ID_VALUE'，'NEW_TINKER_ID，NEW_TINKER_ID_VALUE'
+             * 可选，默认'TINKER_ID，TINKER_ID_VALUE'，'NEW_TINKER_ID，NEW_TINKER_ID_VALUE'
              * 包元文件gen。路径是修补程序文件中的assets / package_meta.txt
              * 你可以在您自己的PackageCheck方法中使用securityCheck.getPackageProperties（）
              * 或TinkerLoadResult.getPackageConfigByName
@@ -291,7 +293,7 @@ if (buildWithTinker()) {
              */
             configField("patchMessage", "tinker is sample to use")
             /**
-             *只是一个例子，你可以使用如sdkVersion，品牌，渠道...
+             * 只是一个例子，你可以使用如sdkVersion，品牌，渠道...
              * 你可以在SamplePatchListener中解析它。
              * 然后你可以使用补丁条件！
              */
@@ -323,7 +325,7 @@ if (buildWithTinker()) {
     }
 
     List<String> flavors = new ArrayList<>();
-    project.android.productFlavors.each {flavor ->
+    project.android.productFlavors.each { flavor ->
         flavors.add(flavor.name)
     }
     boolean hasFlavors = flavors.size() > 0

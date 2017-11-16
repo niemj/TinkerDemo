@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="10dp"
-        android:text="bug已修复"
+        android:text="美化了按钮背景！"
         android:textSize="20sp" />
 
     <Button
@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="5dp"
+        android:background="@drawable/bg_tab_laylist"
         android:text="加载补丁"
         android:textColor="#FD4A2E"
         />
@@ -29,6 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_btn_laylist"
         android:layout_marginTop="5dp"
         android:text="杀死进程" />
 
